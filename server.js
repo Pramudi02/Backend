@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: '*', // Temporarily allow all origins for testing
   credentials: true
 }));
 app.use(bodyParser.json());
