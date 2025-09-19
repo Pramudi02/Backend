@@ -1,1 +1,1 @@
-web: node server.js 
+# Procfile removed — not needed for Vercel. Start server with `npm start` or deploy with Vercel.
