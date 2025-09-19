@@ -1,169 +1,54 @@
-# Deployment Guide: Railway Backend + Firebase Frontend
+# Deployment Guide: Vercel Backend + Vercel or other Frontend
 
-## 🚀 Railway Backend Deployment
+This project is a small Express backend for sending emails from a portfolio contact form. The original guide referenced Railway; this document replaces those steps with instructions for Vercel.
 
-### Step 1: Deploy to Railway
+## Deploying the Backend to Vercel
 
-1. **Go to [Railway.app](https://railway.app)**
-2. **Sign in with GitHub**
-3. **Create New Project** → "Deploy from GitHub repo"
-4. **Select your backend repository**
-5. **Wait for deployment to complete**
+1. Create a Vercel account (https://vercel.com) and link your GitHub repository.
+2. Push your repo to GitHub (if not already).
+3. In Vercel, import the project and choose the `main` branch.
+4. Vercel will detect `vercel.json` and deploy the app using `@vercel/node`.
 
-### Step 2: Configure Environment Variables
+### Environment Variables
 
-In Railway dashboard, add these environment variables:
+Set these in the Vercel dashboard (Project Settings → Environment Variables):
 
 ```
 EMAIL_USER=your-gmail@gmail.com
 EMAIL_PASS=your-gmail-app-password
 EMAIL_FROM=your-gmail@gmail.com
 EMAIL_TO=where-to-receive-emails@gmail.com
-FRONTEND_URL=https://your-firebase-app.web.app
+FRONTEND_URL=https://your-frontend.vercel.app
 AUTO_REPLY_SUBJECT=Thank you for contacting me
 ```
 
-**Important Notes:**
-- Use Gmail App Password, not your regular password
-- To get Gmail App Password:
-  1. Go to Google Account settings
-  2. Security → 2-Step Verification → App passwords
-  3. Generate a new app password for "Mail"
+Notes:
+- Use a Gmail App Password (recommended) rather than your main password.
 
-### Step 3: Get Your Railway URL
+## Frontend
 
-After deployment, Railway will provide a URL like:
-`https://your-app-name.railway.app`
+You can host your frontend on Vercel, Firebase, Netlify, or any static host. Update your frontend's `BACKEND_URL` to point to your Vercel deployment, e.g. `https://your-app-name.vercel.app`.
 
-## 🔥 Firebase Frontend Deployment
+## Testing
 
-### Step 1: Deploy Frontend to Firebase
+- Health check: `https://your-app-name.vercel.app/health`
+- Send a test message from your frontend to `POST https://your-app-name.vercel.app/api/send-email` with JSON { name, email, message }
 
-1. **Install Firebase CLI:**
-   ```bash
-   npm install -g firebase-tools
-   ```
+## Local Development
 
-2. **Login to Firebase:**
-   ```bash
-   firebase login
-   ```
+1. Copy `.env.example` (if you have one) or create a `.env` file with the environment variables above.
+2. Install dependencies: `npm install`
+3. Start locally: `npm start` (or `npm run dev` for nodemon)
 
-3. **Initialize Firebase in your frontend project:**
-   ```bash
-   firebase init hosting
-   ```
+## Troubleshooting
 
-4. **Build and deploy:**
-   ```bash
-   npm run build
-   firebase deploy
-   ```
+- If emails fail, verify `EMAIL_USER` and `EMAIL_PASS` and check the logs in Vercel.
+- If CORS issues occur, update allowed origins in `server.js`.
 
-### Step 2: Update Frontend Configuration
+## Environment Variables Reference
 
-Replace the URLs in your frontend code:
+Same list as above.
 
-```javascript
-// Update these URLs in your frontend
-const BACKEND_URL = 'https://your-app-name.railway.app';
-const FRONTEND_URL = 'https://your-project.web.app';
-```
+---
 
-## 🔗 Connecting Frontend to Backend
-
-### Update CORS Configuration
-
-Your backend already has CORS configured. Make sure to update the `FRONTEND_URL` environment variable in Railway with your actual Firebase URL.
-
-### Frontend API Integration
-
-Use this code in your frontend to connect to the Railway backend:
-
-```javascript
-// Contact form submission
-const handleContactSubmit = async (formData) => {
-  try {
-    const response = await fetch('https://your-app-name.railway.app/api/send-email', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message
-      })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      alert('Message sent successfully!');
-    } else {
-      alert('Failed to send message. Please try again.');
-    }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Failed to send message. Please try again.');
-  }
-};
-```
-
-## ✅ Testing Your Deployment
-
-### 1. Test Backend Health
-Visit: `https://your-app-name.railway.app/health`
-
-Should return:
-```json
-{
-  "status": "OK",
-  "timestamp": "2024-01-01T00:00:00.000Z",
-  "environment": "production"
-}
-```
-
-### 2. Test Email Functionality
-Use your contact form on the Firebase frontend to send a test email.
-
-## 🔧 Troubleshooting
-
-### Common Issues:
-
-1. **CORS Errors:**
-   - Make sure `FRONTEND_URL` is set correctly in Railway
-   - Check that your Firebase URL is correct
-
-2. **Email Not Sending:**
-   - Verify Gmail app password is correct
-   - Check Railway logs for errors
-   - Ensure all environment variables are set
-
-3. **Railway Deployment Fails:**
-   - Check that `package.json` has correct start script
-   - Verify all dependencies are listed
-   - Check Railway logs for build errors
-
-### Railway Logs
-View logs in Railway dashboard to debug issues.
-
-## 📝 Environment Variables Reference
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `EMAIL_USER` | Gmail address | `your-email@gmail.com` |
-| `EMAIL_PASS` | Gmail app password | `abcd efgh ijkl mnop` |
-| `EMAIL_FROM` | From email address | `your-email@gmail.com` |
-| `EMAIL_TO` | Where to receive emails | `contact@yourdomain.com` |
-| `FRONTEND_URL` | Firebase frontend URL | `https://your-app.web.app` |
-| `AUTO_REPLY_SUBJECT` | Auto-reply subject | `Thank you for contacting me` |
-
-## 🎉 Success!
-
-Once everything is configured:
-1. Your backend will be running on Railway
-2. Your frontend will be hosted on Firebase
-3. Contact forms will send emails through your Railway backend
-4. Users will receive auto-reply emails
-5. You'll receive notification emails for each contact form submission 
+This guide replaces previous Railway-specific instructions.
